@@ -8,6 +8,7 @@
 "
 " Based on python.vim (from Vim 6.1 distribution)
 " by Neil Schemenauer <nas at python dot ca>
+" Adapted for personal use by Gibraan Rahman
 "
 " Please use the following channels for reporting bugs, offering suggestions or
 " feedback:
@@ -92,6 +93,7 @@ if version < 600
 elseif exists("b:current_syntax")
   finish
 endif
+let g:python_highlight_exceptions = 1
 
 "
 " Commands
@@ -191,7 +193,7 @@ if !s:Enabled("g:python_highlight_file_headers_as_comments")
   syn match   pythonRun		"\%^#!.*$"
   syn match   pythonCoding	"\%^.*\%(\n.*\)\?#.*coding[:=]\s*[0-9A-Za-z-_.]\+.*$"
 endif
-syn keyword pythonTodo		TODO FIXME XXX contained
+syn keyword pythonTodo		TODO FIXME XXX NOTE Note contained
 
 "
 " Errors
@@ -457,7 +459,7 @@ if s:Enabled("g:python_highlight_exceptions")
 
   syn keyword pythonExClass	Warning UserWarning BytesWarning DeprecationWarning
   syn keyword pythonExClass	PendingDepricationWarning SyntaxWarning
-  syn keyword pythonExClass	RuntimeWarning FutureWarning
+  syn keyword pythonExClass	RuntimeWarning FutureWarning TestWarning
   syn keyword pythonExClass	ImportWarning UnicodeWarning
 endif
 
@@ -470,6 +472,10 @@ else
   syn sync match pythonSync grouphere NONE "):$"
   syn sync maxlines=200
 endif
+"
+"python docstrings as comment
+syn region pythonDocstring  start=+^\s*[uU]\?[rR]\?"""+ end=+"""+ keepend excludenl contains=pythonEscape,@Spell,pythonDoctest,pythonDocTest2,pythonSpaceError
+syn region pythonDocstring  start=+^\s*[uU]\?[rR]\?'''+ end=+'''+ keepend excludenl contains=pythonEscape,@Spell,pythonDoctest,pythonDocTest2,pythonSpaceError
 
 if version >= 508 || !exists("did_python_syn_inits")
   if version <= 508
@@ -492,34 +498,35 @@ if version >= 508 || !exists("did_python_syn_inits")
   HiLink pythonDot              Normal
 
   HiLink pythonComment          Comment
+  HiLink pythonDocString        Comment
   if !s:Enabled("g:python_highlight_file_headers_as_comments")
     HiLink pythonCoding           Special
     HiLink pythonRun              Special
   endif
   HiLink pythonTodo             Todo
 
-  HiLink pythonError            Error
-  HiLink pythonIndentError      Error
-  HiLink pythonSpaceError       Error
+" HiLink pythonError            Error
+" HiLink pythonIndentError      Error
+" HiLink pythonSpaceError       Error
 
   HiLink pythonString           String
   HiLink pythonRawString        String
 
   HiLink pythonUniEscape        Special
-  HiLink pythonUniEscapeError   Error
+" HiLink pythonUniEscapeError   Error
 
   if s:Python2Syntax()
     HiLink pythonUniString          String
     HiLink pythonUniRawString       String
     HiLink pythonUniRawEscape       Special
-    HiLink pythonUniRawEscapeError  Error
+"   HiLink pythonUniRawEscapeError  Error
   else
     HiLink pythonBytes              String
     HiLink pythonRawBytes           String
     HiLink pythonBytesContent       String
-    HiLink pythonBytesError         Error
+"   HiLink pythonBytesError         Error
     HiLink pythonBytesEscape        Special
-    HiLink pythonBytesEscapeError   Error
+"   HiLink pythonBytesEscapeError   Error
   endif
 
   HiLink pythonStrFormatting    Special
@@ -533,11 +540,11 @@ if version >= 508 || !exists("did_python_syn_inits")
   HiLink pythonHexNumber        Number
   HiLink pythonOctNumber        Number
   HiLink pythonBinNumber        Number
-  HiLink pythonFloat            Float
-  HiLink pythonNumberError      Error
-  HiLink pythonOctError         Error
-  HiLink pythonHexError         Error
-  HiLink pythonBinError         Error
+"  HiLink pythonFloat            Float
+"  HiLink pythonNumberError      Error
+"  HiLink pythonOctError         Error
+"  HiLink pythonHexError         Error
+"  HiLink pythonBinError         Error
 
   HiLink pythonBoolean          Boolean
 
@@ -549,9 +556,5 @@ if version >= 508 || !exists("did_python_syn_inits")
   delcommand HiLink
 endif
 
-let b:current_syntax = "python"
-" Highlight docstrings as comments, not string.
-syn region pythonDocstring  start=+^\s*[uU]\?[rR]\?"""+ end=+"""+ keepend excludenl contains=pythonEscape,@Spell,pythonDoctest,pythonDocTest2,pythonSpaceError
-syn region pythonDocstring  start=+^\s*[uU]\?[rR]\?'''+ end=+'''+ keepend excludenl contains=pythonEscape,@Spell,pythonDoctest,pythonDocTest2,pythonSpaceError
 
-hi def link pythonDocstring pythonComment
+let b:current_syntax = "python"
