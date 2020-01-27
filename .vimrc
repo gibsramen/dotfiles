@@ -132,6 +132,7 @@ au FileType python nnoremap <buffer> <leader>af :ALEFix autopep8<CR>
 
 let x=$CONDA_DEFAULT_ENV
 let g:airline_section_y=$CONDA_DEFAULT_ENV
+let g:airline#extensions#tabline#enabled = 1
 "let g:airline_section_b="%{airline#util#wrap(airline#extensions#branch#get_head(),80)}"
 "let g:airline_section_x="%<%<%{airline#extensions#fugitiveline#bufname()}%m %#__accent_red#%{airline#util#wrap(airline#parts#readonly(),0)}%#__restore__#"
 "let g:airline_section_y = ''
