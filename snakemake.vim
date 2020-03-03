@@ -49,7 +49,7 @@ source $VIMRUNTIME/syntax/python.vim
 
 
 syn keyword pythonStatement	include workdir onsuccess onerror
-syn keyword pythonStatement	ruleorder localrules configfile group
+syn keyword pythonStatement	ruleorder localrules configfile group config
 syn keyword pythonStatement	touch protected temp wrapper conda shadow
 syn keyword pythonStatement	input output params message threads resources singularity
 syn keyword pythonStatement	version run shell benchmark snakefile log script

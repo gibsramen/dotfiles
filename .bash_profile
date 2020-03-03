@@ -16,11 +16,11 @@ CONDA_ENV="[$(basename "$CONDA_PREFIX")]"
 export PS1='\[\e[41;1;30m\]$(parse_env)\[\e[0m\]\[\e[43;1;30m\]$(parse_git_branch)\[\e[0m\]\[\e[42;1;30m\]\h:\[\e[0m\]\[\e[1;36m\]$(short_pwd)/\[\e[0m\]\n$ '
 
 #PATH="~/bin:${PATH}"
-PATH="/Users/gibs/.gem/ruby/2.6.0/bin:${PATH}"
+#PATH="/Users/gibs/.gem/ruby/2.6.0/bin:${PATH}"
 #export PATH
 
 parse_git_branch() {
-     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/[\1]/'
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/[ᚠ \1]/'
 }
 
 # set changeps1 to False in .condarc
