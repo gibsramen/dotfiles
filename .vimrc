@@ -38,6 +38,9 @@ hi Number ctermfg=75
 hi Debug cterm=bold,underline ctermbg=LightGrey ctermfg=black
 hi Pmenu ctermbg=gray
 
+"replace ; with Enter to go forward with t or f
+"because ; is already the leader
+nnoremap <CR> ;
 inoremap jj <Esc>
 
 let mapleader = ";"
@@ -64,11 +67,11 @@ nnoremap Y y$
 
 augroup octothorpe_comments
     autocmd!
-	au FileType python,r vnoremap <buffer> ## :norm i#<Esc>
-	au FileType python,r vnoremap <buffer> <leader>## :norm 0x<Esc>
+    au FileType python,r vnoremap <buffer> ## :norm i#<Esc>
+    au FileType python,r vnoremap <buffer> <leader>## :norm 0x<Esc>
 
-	au FileType python nnoremap <buffer> ## 0<C-V>I#<Esc>
-	au FileType python nnoremap <buffer> <leader>## 0<C-V>x
+    au FileType python nnoremap <buffer> ## 0<C-V>I#<Esc>
+    au FileType python nnoremap <buffer> <leader>## 0<C-V>x
 augroup end
 
 augroup python colorcol
@@ -86,7 +89,7 @@ augroup end
 
 au BufRead,BufNewFile *.py setlocal textwidth=79
 augroup Shebang
-	autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl>\"|$
+    autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl>\"|$
 augroup END
 
 au BufRead,BufNewFile *.tex setlocal wrap
@@ -95,6 +98,8 @@ augroup tex_template
     au BufNewFile *.tex 0put =\"\\documentclass[]{article}\<nl>\"|$
     au BufNewFile *.tex 1put =\"\\begin{document}\<nl>\"|$
     au BufNewFile *.tex 3put =\"\\end{document}\<nl>\"|$
+    au BufNewFile,BufRead *.tex nnoremap j gj
+    au BufNewFile,BufRead *.tex nnoremap k gk
 augroup end
 
 au BufNewFile,BufRead Snakefile* set syntax=snakemake
@@ -122,38 +127,27 @@ let g:ale_virtualenv_dir_names = []
 "let g:ale_sign_column_always = 1
 
 filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin()
 
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'scrooloose/nerdtree'
-Plugin 'lervag/vimtex'
-Plugin 'dense-analysis/ale'
-Plugin 'vim-airline/vim-airline'
-Plugin 'junegunn/limelight.vim'
-Plugin 'gibsramen/vim-delim'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'scrooloose/nerdtree'
+Plug 'lervag/vimtex'
+Plug 'dense-analysis/ale'
+Plug 'vim-airline/vim-airline'
+Plug 'junegunn/limelight.vim'
+Plug 'junegunn/fzf', { 'do': './install --bin' }
+Plug 'junegunn/fzf.vim'
+Plug 'gibsramen/vim-delim'
 
-Plugin 'prabirshrestha/asyncomplete.vim'
-Plugin 'prabirshrestha/async.vim'
-Plugin 'prabirshrestha/vim-lsp'
-Plugin 'prabirshrestha/asyncomplete-lsp.vim'
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-
-if executable('pyls')
-    " pip install python-language-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ })
-endif
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
 let g:asyncomplete_auto_popup = 0
+let g:asyncomplete_auto_completeopt = 0
+set completeopt=menu,preview,noinsert
 
 function! s:check_back_space() abort
     let col = col('.') - 1
@@ -166,6 +160,19 @@ inoremap <silent><expr> <TAB>
   \ asyncomplete#force_refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
+call plug#end()            " required
+filetype plugin indent on    " required
+
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
+
+
 let g:lsp_highlights_enabled = 0
 let g:lsp_textprop_enabled = 0
 let g:lsp_diagnostics_enabled = 0
@@ -174,7 +181,6 @@ let g:lsp_signs_enabled = 0
 "inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 "inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 "inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
-
 
 map <C-n> :NERDTreeToggle<CR>
 nnoremap <leader>an :ALENext<CR>
@@ -193,4 +199,3 @@ let g:airline#extensions#tabline#enabled = 1
 
 let g:limelight_conceal_ctermfg='gray'
 nnoremap <leader>ll :Limelight!!<CR>
-
