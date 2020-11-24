@@ -48,7 +48,9 @@ nnoremap <leader>n :bn<CR>
 nnoremap <leader>p :bp<CR>
 nnoremap <leader>d :bd<CR>
 
-command Bd bp\|bd \#
+"command Bd bp\|bd \#
+"use to close buffer without closing split
+nnoremap ,d :b#<bar>bd#<CR>
 
 nnoremap <C-j> <C-W>j
 nnoremap <C-k> <C-W>k
@@ -92,14 +94,16 @@ augroup Shebang
     autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl>\"|$
 augroup END
 
+let g:tex_flavor = 'latex'
 au BufRead,BufNewFile *.tex setlocal wrap
+au BufNewFile,BufRead *.tex nnoremap j gj
+au BufNewFile,BufRead *.tex nnoremap k gk
+au BufNewFile,BufRead *.tex nnoremap <leader>vc :VimtexCompile<CR>
 
 augroup tex_template
     au BufNewFile *.tex 0put =\"\\documentclass[]{article}\<nl>\"|$
     au BufNewFile *.tex 1put =\"\\begin{document}\<nl>\"|$
     au BufNewFile *.tex 3put =\"\\end{document}\<nl>\"|$
-    au BufNewFile,BufRead *.tex nnoremap j gj
-    au BufNewFile,BufRead *.tex nnoremap k gk
 augroup end
 
 au BufNewFile,BufRead Snakefile* set syntax=snakemake
@@ -117,18 +121,16 @@ augroup markdown
     au BufNewFile,BufRead *.md nnoremap <leader>s 1z=
 augroup end
 
-let r_indent_align_args = 0
+augroup Makefile
+    au BufNewFile,BufRead Makefile* setlocal noexpandtab
+augroup end
 
-let g:ale_completion_enabled = 1
-"let g:ale_linters = {'python': ['flake8', 'mypy', 'pylint', 'pyls']}
-let g:ale_linters = {'python': ['flake8']}
-let g:vimtex_view_method = 'skim'
-let g:ale_virtualenv_dir_names = []
-"let g:ale_sign_column_always = 1
+let r_indent_align_args = 0
 
 filetype off
 call plug#begin()
 
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdtree'
@@ -139,26 +141,8 @@ Plug 'junegunn/limelight.vim'
 Plug 'junegunn/fzf', { 'do': './install --bin' }
 Plug 'junegunn/fzf.vim'
 Plug 'gibsramen/vim-delim'
-
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-
-let g:asyncomplete_auto_popup = 0
-let g:asyncomplete_auto_completeopt = 0
-set completeopt=menu,preview,noinsert
-
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
-endfunction
-
-inoremap <silent><expr> <TAB>
-  \ pumvisible() ? "\<C-n>" :
-  \ <SID>check_back_space() ? "\<TAB>" :
-  \ asyncomplete#force_refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+Plug 'jpalardy/vim-slime'
+Plug 'eigenfoo/stan-vim'
 
 call plug#end()            " required
 filetype plugin indent on    " required
@@ -172,30 +156,92 @@ if executable('pyls')
         \ })
 endif
 
-
-let g:lsp_highlights_enabled = 0
-let g:lsp_textprop_enabled = 0
-let g:lsp_diagnostics_enabled = 0
-let g:lsp_signs_enabled = 0
-
-"inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-"inoremap <expr> <cr>    pumvisible() ? "\<C-y>" : "\<cr>"
-
 map <C-n> :NERDTreeToggle<CR>
-nnoremap <leader>an :ALENext<CR>
-nnoremap <leader>ap :ALEPrevious<CR>
-au FileType python nnoremap <buffer> <leader>af :ALEFix autopep8<CR>
-
-"vim-airline
-
-let x=$CONDA_DEFAULT_ENV
-let g:airline_section_y=$CONDA_DEFAULT_ENV
-let g:airline#extensions#tabline#enabled = 1
-"let g:airline_section_b="%{airline#util#wrap(airline#extensions#branch#get_head(),80)}"
-"let g:airline_section_x="%<%<%{airline#extensions#fugitiveline#bufname()}%m %#__accent_red#%{airline#util#wrap(airline#parts#readonly(),0)}%#__restore__#"
-"let g:airline_section_y = ''
-"let g:airline_section_z = ''
 
 let g:limelight_conceal_ctermfg='gray'
 nnoremap <leader>ll :Limelight!!<CR>
+nnoremap <leader>f :Files<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CoC                                                                         "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+let g:coc_start_at_startup = 1
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ALE                                                                         "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ale_set_highlights = 0
+let g:airline#extensions#ale#enabled = 0
+let g:ale_completion_enabled = 0
+let g:ale_linters = {
+\    'python': ['flake8'],
+\    'latex': [],
+\    'javascript': ['jshint']
+\}
+let g:ale_linters_explicit = 1
+"let g:ale_sign_column_always = 1
+let g:ale_virtualenv_dir_names = []
+nnoremap <leader>an :ALENext<CR>
+nnoremap <leader>ap :ALEPrevious<CR>
+au FileType python nnoremap <buffer> <leader>af :ALEFix autopep8<CR>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Airline                                                                     "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:airline_section_y=$CONDA_DEFAULT_ENV
+let g:airline#extensions#tabline#enabled = 1
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vimtex                                                                      "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:vimtex_quickfix_ignore_filters = [
+      \ 'Font Warning',
+      \ 'Underfull',
+      \]
+let g:vimtex_view_method = 'skim'
+let g:vimtex_compiler_latexmk = {'continuous': 0}
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" FZF                                                                         "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+
+" Insert mode completion
+imap <c-x><c-f> <plug>(fzf-complete-path)
+imap <c-x><c-l> <plug>(fzf-complete-line)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Slime                                                                       "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:slime_target = "tmux"
+tnoremap <silent><C-D> <C-D><C-\><C-N>ZQ
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
