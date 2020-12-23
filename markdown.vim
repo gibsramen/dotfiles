@@ -91,6 +91,8 @@ syn region markdownCode matchgroup=markdownCodeDelimiter start="`" end="`" keepe
 syn region markdownCode matchgroup=markdownCodeDelimiter start="`` \=" end=" \=``" keepend contains=markdownLineStart
 syn region markdownCode matchgroup=markdownCodeDelimiter start="^\s*```.*$" end="^\s*```\ze\s*$" keepend
 
+"syn match markdownCode "`.\{-}`"
+
 syn match markdownFootnote "\[^[^\]]\+\]"
 syn match markdownFootnoteDefinition "^\[^[^\]]\+\]:"
 
@@ -148,4 +150,6 @@ if main_syntax ==# 'markdown'
 endif
 
 hi htmlH1 cterm=bold ctermfg=cyan
+hi markdownCode ctermfg=green ctermbg=darkgrey
+hi markdownCodeDelimiter ctermfg=green ctermbg=darkgrey
 " vim:set sw=2:

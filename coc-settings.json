@@ -1,0 +1,13 @@
+{
+  "diagnostic.messageTarget": "echo",
+  "diagnostic.virtualTextPrefix": " >> ",
+  "diagnostic.virtualText": true,
+  "diagnostic.enableHighlightLineNumber": false,
+  "diagnostic.errorSign": ">>",
+  "diagnostic.warningSign": "--",
+  "diagnostic.checkCurrentLine": true,
+  "python.formatting.provider": "pep8",
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true
+}
