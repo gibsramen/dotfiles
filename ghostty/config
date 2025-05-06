@@ -1,0 +1,47 @@
+macos-titlebar-style = "tabs"
+
+theme = ""
+font-family = "DejaVuSansM Nerd Font Mono"
+font-size = 16
+bold-is-bright = false
+font-thicken = false
+
+# https://www.ditig.com/publications/256-colors-cheat-sheet
+# Manually copied these hex codes from my previous iTerm2 setup
+palette = 0=#000000
+palette = 1=#b83019
+palette = 2=#51bf37
+palette = 3=#c6c43d
+palette = 4=#7c24bf
+palette = 5=#b93ec1
+palette = 6=#6b99e3
+palette = 7=#c7c7c7
+palette = 8=#494949
+
+palette = 9=#ef766d
+palette = 10=#8cf67a
+palette = 11=#fefb7e
+palette = 12=#6a71f6
+palette = 13=#f07ef8
+palette = 14=#0ef9fd
+palette = 15=#feffff
+
+background = #0f1e27
+foreground = #dbd7bc
+cursor-color = #c7c7c7
+selection-background = #b1c5e3
+selection-foreground = #000000
+
+#custom-shader = "./tft.glsl"
+#macos-icon = "custom-style"
+#macos-icon-ghost-color = #00ff00
+#macos-icon-screen-color = #000000
+
+shell-integration-features = no-cursor
+cursor-style = "block"
+cursor-style-blink = true
+mouse-hide-while-typing = true
+
+# https://unix.stackexchange.com/a/255716
+# Used to bypass printing fixterms
+keybind = ctrl+[=text:\x1b
